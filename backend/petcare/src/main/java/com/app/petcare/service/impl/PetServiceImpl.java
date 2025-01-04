@@ -3,6 +3,7 @@ package com.app.petcare.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,13 +59,16 @@ public class PetServiceImpl implements PetService {
 	public PetDTO updatePetData(Long petId, PetDTO petdto) {
 		Pet pet = this.petRepository.findById(petId)
 				.orElseThrow(() -> new ResourceNotFoundException("Pet Data not found with Id : " + petId));
-		return null;
+		pet = this.petRepository.save(updateSavedPetDate(pet, petdto));
+		return this.modelMapper.map(pet, PetDTO.class);
 	}
 
 	@Override
 	public DeleteResponse deletePetDate(Long petId) {
-		// TODO Auto-generated method stub
-		return null;
+		Pet pet = this.petRepository.findById(petId)
+				.orElseThrow(() -> new ResourceNotFoundException("{Pet Data Not Exist for the Given Id :" + petId));
+		this.petRepository.delete(pet);
+		return new DeleteResponse(LocalDateTime.now(), "Pet Data Deleted successfully with id :" + petId);
 	}
 
 	/*-------------------------------------Helper-Method-Area-----------------------------------------------------------*/
@@ -85,4 +89,12 @@ public class PetServiceImpl implements PetService {
 		return petDtoList.stream().map(item -> this.modelMapper.map(item, Pet.class)).toList();
 	}
 
+	private Pet updateSavedPetDate(Pet savedPet, PetDTO petDTO) {
+		savedPet.setAge(petDTO.getAge());
+		savedPet.setBreed(petDTO.getBreed());
+		savedPet.setMedicalHistory(savedPet.getMedicalHistory() + "\n" + petDTO.getMedicalHistory());
+		savedPet.setPetName(petDTO.getPetName());
+		savedPet.setUpdatedAt(LocalDateTime.now());
+		return savedPet;
+	}
 }

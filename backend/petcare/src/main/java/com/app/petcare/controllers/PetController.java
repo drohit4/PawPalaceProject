@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.petcare.customeresponse.DeleteResponse;
 import com.app.petcare.dto.PetDTO;
 import com.app.petcare.models.Pet;
 import com.app.petcare.service.PetService;
@@ -24,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.Delegate;
 
 @RestController
 @Validated
@@ -93,8 +96,8 @@ public class PetController {
 			@ApiResponse(responseCode = "404", description = "Pet not found", content = @Content) })
 	@PutMapping("/{petId}")
 	public ResponseEntity<PetDTO> updatePetData(@PathVariable Long petId, @Valid @RequestBody PetDTO petdto) {
-		// Simulate updating the pet data (replace with actual service call)
-		return ResponseEntity.status(HttpStatus.OK).body(petdto);
+		PetDTO  petDTO = this.petService.updatePetData(petId, petdto);
+		return ResponseEntity.status(HttpStatus.OK).body(petDTO);
 	}
 
 	/**
@@ -107,7 +110,9 @@ public class PetController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Pet data successfully updated in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
 			@ApiResponse(responseCode = "404", description = "Pet not found", content = @Content) })
-	public ResponseEntity<?> detelePetData(@PathVariable Long petId){
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+	@DeleteMapping("/{petId}")
+	public ResponseEntity<DeleteResponse> detelePetData(@PathVariable Long petId){
+		DeleteResponse deleteResponse = this.petService.deletePetDate(petId);
+		return ResponseEntity.status(HttpStatus.OK).body(deleteResponse);
 	}
 }

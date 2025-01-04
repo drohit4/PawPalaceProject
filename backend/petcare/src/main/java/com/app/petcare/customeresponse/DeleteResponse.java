@@ -14,5 +14,5 @@ import lombok.ToString;
 public class DeleteResponse {
 
 	private LocalDateTime timestamp;
-	private String msg;
+	private String message;
 }

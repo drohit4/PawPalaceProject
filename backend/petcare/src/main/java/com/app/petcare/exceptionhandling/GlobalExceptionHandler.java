@@ -1,4 +1,4 @@
- package com.app.petcare.exceptionhandling;
+package com.app.petcare.exceptionhandling;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -14,79 +14,88 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.app.petcare.customeresponse.ErrorResponse;
 import com.app.petcare.exceptions.APIException;
 import com.app.petcare.exceptions.ResourceNotFoundException;
+import com.app.petcare.exceptions.UserAlreadyExistsException;
+import com.app.petcare.exceptions.UserNotFoundException;
 
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getAllErrors().forEach(err -> {
-            String fieldName = ((FieldError) err).getField();
-            String message = err.getDefaultMessage();
-            errors.put(fieldName, message);
-        });
+		ex.getBindingResult().getAllErrors().forEach(err -> {
+			String fieldName = ((FieldError) err).getField();
+			String message = err.getDefaultMessage();
+			errors.put(fieldName, message);
+		});
 
-        ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.BAD_REQUEST.value(),
-            HttpStatus.BAD_REQUEST,
-            errors
-        );
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST, errors);
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        
-        ex.getConstraintViolations().forEach(constraintViolation -> {
-            String propertyPath = constraintViolation.getPropertyPath().toString();
-            String message = constraintViolation.getMessage();
-            errors.put(propertyPath, message);
-        });
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+		Map<String, String> errors = new HashMap<>();
 
-        ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.BAD_REQUEST.value(),
-            HttpStatus.BAD_REQUEST,
-            errors
-        );
+		ex.getConstraintViolations().forEach(constraintViolation -> {
+			String propertyPath = constraintViolation.getPropertyPath().toString();
+			String message = constraintViolation.getMessage();
+			errors.put(propertyPath, message);
+		});
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST, errors);
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("cause", ex.getMessage());
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
 
-        ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.NOT_FOUND.value(),
-            HttpStatus.NOT_FOUND,
-            errors
-        );
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("cause", ex.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(),
+				HttpStatus.NOT_FOUND, errors);
 
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<ErrorResponse> handleAPIException(APIException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("cause", ex.getMessage());
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
 
-        ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.BAD_REQUEST.value(),
-            HttpStatus.BAD_REQUEST,
-            errors
-        );
+	@ExceptionHandler(APIException.class)
+	public ResponseEntity<ErrorResponse> handleAPIException(APIException ex) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("cause", ex.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST, errors);
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("cause", ex.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST, errors);
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex){
+		Map<String, String> errors = new HashMap<String, String>();
+		errors.put("cause", ex.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST, errors);
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);	
+	}
+	
 }

@@ -22,11 +22,11 @@ import com.app.petcare.service.PetService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import lombok.Delegate;
 
 @RestController
 @Validated
@@ -41,9 +41,9 @@ public class PetController {
 	 * 
 	 * @return ResponseEntity containing a list of all pets
 	 */
-	@Operation(summary = "Retrieve All Pets", description = "Fetches a list of all pets in the system.")
+	@Operation(summary = "Retrieve all pets", description = "Fetches a list of all pets in the system.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successfully retrieved the list of pets", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
+			@ApiResponse(responseCode = "200", description = "Successfully retrieved the list of pets", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class), examples = @ExampleObject(value = "[{ \"id\": 1, \"name\": \"Buddy\", \"age\": 3, \"species\": \"Dog\" }]"))),
 			@ApiResponse(responseCode = "404", description = "No pets found", content = @Content) })
 	@GetMapping
 	public ResponseEntity<List<PetDTO>> retrieveAllPets() {
@@ -52,14 +52,15 @@ public class PetController {
 	}
 	
 	/**
-	 * Get Pets Data by id.
+	 * Get Pet data by ID.
 	 * 
-	 * @return ResponseEntity containing a list of all pets
+	 * @param petId The ID of the pet to be retrieved
+	 * @return ResponseEntity containing the pet data
 	 */
-	@Operation(summary = "Retrieve Pet Data using Id", description = "Fetches a Pet Data using pet_id.")
+	@Operation(summary = "Retrieve pet data by ID", description = "Fetches pet data by pet ID.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successfully retrieved the pet data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
-			@ApiResponse(responseCode = "404", description = "No pet data found", content = @Content) })
+			@ApiResponse(responseCode = "200", description = "Successfully retrieved the pet data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class), examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"age\": 3, \"species\": \"Dog\" }"))),
+			@ApiResponse(responseCode = "404", description = "No pet found with the provided ID", content = @Content) })
 	@GetMapping("/{petId}")
 	public ResponseEntity<PetDTO> retrievePetDataById(@PathVariable Long petId) {
 		PetDTO pet = this.petService.getPetDataById(petId);
@@ -67,16 +68,15 @@ public class PetController {
 	}
 
 	/**
-	 * Persists pet data into the database.
+	 * Save pet data into the database.
 	 *
 	 * @param petdto The pet data to be saved
 	 * @return ResponseEntity containing the saved pet data and status
 	 */
-	@Operation(summary = "Save Pet Data", description = "Persists the pet data into the database.")
+	@Operation(summary = "Save pet data", description = "Saves the pet data into the database.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "Pet data successfully saved in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
-			@ApiResponse(responseCode = "404", description = "Error Occured At Saving the Data", content = @Content)
-	})
+			@ApiResponse(responseCode = "201", description = "Pet data successfully saved in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class), examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"age\": 3, \"species\": \"Dog\" }"))),
+			@ApiResponse(responseCode = "400", description = "Error occurred while saving the pet data", content = @Content) })
 	@PostMapping
 	public ResponseEntity<PetDTO> savePetData(@Valid @RequestBody PetDTO petdto) {
 		PetDTO pet = this.petService.createPetProfile(petdto);
@@ -90,28 +90,28 @@ public class PetController {
 	 * @param petdto The pet data to be updated
 	 * @return ResponseEntity containing the updated pet data and status
 	 */
-	@Operation(summary = "Update Pet Data", description = "Updates the pet data in the database.")
+	@Operation(summary = "Update pet data", description = "Updates the pet data in the database.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Pet data successfully updated in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
-			@ApiResponse(responseCode = "404", description = "Pet not found", content = @Content) })
+			@ApiResponse(responseCode = "200", description = "Pet data successfully updated in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class), examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"age\": 4, \"species\": \"Dog\" }"))),
+			@ApiResponse(responseCode = "404", description = "Pet not found with the provided ID", content = @Content) })
 	@PutMapping("/{petId}")
 	public ResponseEntity<PetDTO> updatePetData(@PathVariable Long petId, @Valid @RequestBody PetDTO petdto) {
-		PetDTO  petDTO = this.petService.updatePetData(petId, petdto);
+		PetDTO petDTO = this.petService.updatePetData(petId, petdto);
 		return ResponseEntity.status(HttpStatus.OK).body(petDTO);
 	}
 
 	/**
-	 * Delete pet data in the database.
+	 * Delete pet data from the database.
 	 *
-	 * @param petId  The ID of the pet to be updated
-	 * @return ResponseEntity containing the deleted pet data and status
+	 * @param petId The ID of the pet to be deleted
+	 * @return ResponseEntity containing the deletion status
 	 */
-	@Operation(summary = "Update Pet Data", description = "Updates the pet data in the database.")
+	@Operation(summary = "Delete pet data", description = "Deletes the pet data from the database using the pet ID.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Pet data successfully updated in the database", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pet.class))),
-			@ApiResponse(responseCode = "404", description = "Pet not found", content = @Content) })
+			@ApiResponse(responseCode = "200", description = "Pet data successfully deleted", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DeleteResponse.class), examples = @ExampleObject(value = "{ \"message\": \"Pet data deleted successfully\", \"status\": \"SUCCESS\" }"))),
+			@ApiResponse(responseCode = "404", description = "Pet not found with the provided ID", content = @Content) })
 	@DeleteMapping("/{petId}")
-	public ResponseEntity<DeleteResponse> detelePetData(@PathVariable Long petId){
+	public ResponseEntity<DeleteResponse> deletePetData(@PathVariable Long petId) {
 		DeleteResponse deleteResponse = this.petService.deletePetDate(petId);
 		return ResponseEntity.status(HttpStatus.OK).body(deleteResponse);
 	}

@@ -34,11 +34,11 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "GET_ALL_USERS", description = "FETCH_ALL_THE_USERS_FROM_DATABASE")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_ALL_USERS", 
+    @ApiResponses(value = { 
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_ALL_USERS",
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = UserDTO.class),
-                         examples = @ExampleObject(value = "[{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }]"))),
+                         examples = @ExampleObject(value = "[{ \"userId\": 1, \"username\": \"john_doe\", \"password\": \"password123\", \"email\": \"john.doe@example.com\", \"mobNumber\": \"1234567890\" }]"))),
             @ApiResponse(responseCode = "404", description = "NO_USERS_FOUND", content = @Content) })
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -48,10 +48,10 @@ public class UserController {
 
     @Operation(summary = "GET_USER_BY_ID", description = "FETCH_USER_DATA_USING_THE_ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_USER_BY_ID", 
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_USER_BY_ID",
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = UserDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }"))),
+                         examples = @ExampleObject(value = "{ \"userId\": 1, \"username\": \"john_doe\", \"password\": \"password123\", \"email\": \"john.doe@example.com\", \"mobNumber\": \"1234567890\" }"))),
             @ApiResponse(responseCode = "404", description = "NO_USER_FOUND_WITH_ID", content = @Content) })
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
@@ -61,10 +61,10 @@ public class UserController {
 
     @Operation(summary = "CREATE_NEW_USER", description = "SAVE_NEW_USER_IN_THE_DATABASE")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY_SAVED_USER_DATA", 
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY_SAVED_USER_DATA",
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = UserDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }"))),
+                         examples = @ExampleObject(value = "{ \"userId\": 1, \"username\": \"john_doe\", \"password\": \"password123\", \"email\": \"john.doe@example.com\", \"mobNumber\": \"1234567890\" }"))),
             @ApiResponse(responseCode = "400", description = "INVALID_INPUT_DATA", content = @Content) })
     @PostMapping
     public ResponseEntity<UserDTO> saveUserData(@Valid @RequestBody UserDTO userDTO) {
@@ -74,10 +74,10 @@ public class UserController {
 
     @Operation(summary = "UPDATE_EXISTING_USER", description = "UPDATE_EXISTING_USER_DATA")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_UPDATED_USER_DATA", 
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_UPDATED_USER_DATA",
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = UserDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@newdomain.com\" }"))),
+                         examples = @ExampleObject(value = "{ \"userId\": 1, \"username\": \"john_doe\", \"password\": \"newpassword123\", \"email\": \"john.doe@example.com\", \"mobNumber\": \"9876543210\" }"))),
             @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND_WITH_ID", content = @Content) })
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUserData(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
@@ -87,7 +87,7 @@ public class UserController {
 
     @Operation(summary = "DELETE_EXISTING_USER", description = "DELETE_USER_DATA")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_DELETED_USER_DATA", 
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_DELETED_USER_DATA",
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = DeleteResponse.class),
                          examples = @ExampleObject(value = "{ \"message\": \"USER_DATA_DELETED_SUCCESSFULLY\", \"status\": \"success\" }"))),

@@ -38,7 +38,7 @@ public class PetController {
             @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_ALL_PETS", 
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = PetDTO.class),
-                         examples = @ExampleObject(value = "[{ \"id\": 1, \"name\": \"Buddy\", \"type\": \"Dog\", \"age\": 5 }]"))),
+                         examples = @ExampleObject(value = "[{ \"petId\": 1, \"petName\": \"Buddy\", \"breed\": \"Dog\", \"age\": 5, \"medicalHistory\": \"No issues\", \"createdAt\": \"2025-01-01T10:00:00\", \"updatedAt\": \"2025-01-01T10:00:00\" }]"))),
             @ApiResponse(responseCode = "404", description = "NO_PETS_FOUND", content = @Content) })
     @GetMapping
     public ResponseEntity<List<PetDTO>> retrieveAllPets() {
@@ -51,7 +51,7 @@ public class PetController {
             @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_PET_BY_ID", 
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = PetDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"type\": \"Dog\", \"age\": 5 }"))),
+                         examples = @ExampleObject(value = "{ \"petId\": 1, \"petName\": \"Buddy\", \"breed\": \"Dog\", \"age\": 5, \"medicalHistory\": \"No issues\", \"createdAt\": \"2025-01-01T10:00:00\", \"updatedAt\": \"2025-01-01T10:00:00\" }"))),
             @ApiResponse(responseCode = "404", description = "NO_PET_FOUND_WITH_ID", content = @Content) })
     @GetMapping("/{petId}")
     public ResponseEntity<PetDTO> retrievePetDataById(@PathVariable Long petId) {
@@ -64,7 +64,7 @@ public class PetController {
             @ApiResponse(responseCode = "201", description = "SUCCESSFULLY_SAVED_PET_DATA", 
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = PetDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"type\": \"Dog\", \"age\": 5 }"))),
+                         examples = @ExampleObject(value = "{ \"petId\": 1, \"petName\": \"Buddy\", \"breed\": \"Dog\", \"age\": 5, \"medicalHistory\": \"No issues\", \"createdAt\": \"2025-01-01T10:00:00\", \"updatedAt\": \"2025-01-01T10:00:00\" }"))),
             @ApiResponse(responseCode = "400", description = "INVALID_INPUT_DATA", content = @Content) })
     @PostMapping
     public ResponseEntity<PetDTO> savePetData(@Valid @RequestBody PetDTO petdto) {
@@ -77,7 +77,7 @@ public class PetController {
             @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_UPDATED_PET_DATA", 
                          content = @Content(mediaType = "application/json", 
                          schema = @Schema(implementation = PetDTO.class),
-                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"Buddy\", \"type\": \"Dog\", \"age\": 6 }"))),
+                         examples = @ExampleObject(value = "{ \"petId\": 1, \"petName\": \"Buddy\", \"breed\": \"Dog\", \"age\": 6, \"medicalHistory\": \"No issues\", \"createdAt\": \"2025-01-01T10:00:00\", \"updatedAt\": \"2025-01-02T12:00:00\" }"))),
             @ApiResponse(responseCode = "404", description = "PET_NOT_FOUND_WITH_ID", content = @Content) })
     @PutMapping("/{petId}")
     public ResponseEntity<PetDTO> updatePetData(@PathVariable Long petId, @Valid @RequestBody PetDTO petdto) {

@@ -101,7 +101,7 @@ public class PetController {
 	}
 
 	/**
-	 * Update pet data in the database.
+	 * Delete pet data in the database.
 	 *
 	 * @param petId  The ID of the pet to be updated
 	 * @return ResponseEntity containing the deleted pet data and status

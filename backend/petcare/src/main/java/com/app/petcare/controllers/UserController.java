@@ -19,6 +19,9 @@ import com.app.petcare.dto.UserDTO;
 import com.app.petcare.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -26,58 +29,69 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "GET_ALL_USERS", description = "Fetch All the Users from Database")
-    @ApiResponses(value = { 
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_ALL_USERS"),
-            @ApiResponse(responseCode = "404", description = "NO_USERS_FOUND") })
+    @Operation(summary = "GET_ALL_USERS", description = "FETCH_ALL_THE_USERS_FROM_DATABASE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_ALL_USERS", 
+                         content = @Content(mediaType = "application/json", 
+                         schema = @Schema(implementation = UserDTO.class),
+                         examples = @ExampleObject(value = "[{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }]"))),
+            @ApiResponse(responseCode = "404", description = "NO_USERS_FOUND", content = @Content) })
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userList = this.userService.retriveAllUsers();
         return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
 
-    @Operation(summary = "GET_USER_BY_ID", description = "Fetch the User data using the Id")
+    @Operation(summary = "GET_USER_BY_ID", description = "FETCH_USER_DATA_USING_THE_ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_USER_BY_ID"),
-            @ApiResponse(responseCode = "404", description = "NO_USER_FOUND_WITH_ID")
-    })
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_RETRIEVED_USER_BY_ID", 
+                         content = @Content(mediaType = "application/json", 
+                         schema = @Schema(implementation = UserDTO.class),
+                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }"))),
+            @ApiResponse(responseCode = "404", description = "NO_USER_FOUND_WITH_ID", content = @Content) })
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
         UserDTO userDTO = this.userService.fetchUserById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
-    @Operation(summary = "CREATE_NEW_USER", description = "Save the new user in the database")
+    @Operation(summary = "CREATE_NEW_USER", description = "SAVE_NEW_USER_IN_THE_DATABASE")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY_SAVED_USER_DATA"),
-            @ApiResponse(responseCode = "400", description = "INVALID_INPUT_DATA")
-    })
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY_SAVED_USER_DATA", 
+                         content = @Content(mediaType = "application/json", 
+                         schema = @Schema(implementation = UserDTO.class),
+                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@example.com\" }"))),
+            @ApiResponse(responseCode = "400", description = "INVALID_INPUT_DATA", content = @Content) })
     @PostMapping
     public ResponseEntity<UserDTO> saveUserData(@Valid @RequestBody UserDTO userDTO) {
         UserDTO savedUserDTO = this.userService.createUserData(userDTO);  
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUserDTO);
     }
 
-    @Operation(summary = "UPDATE_EXISTING_USER", description = "Update the existing user data")
+    @Operation(summary = "UPDATE_EXISTING_USER", description = "UPDATE_EXISTING_USER_DATA")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_UPDATED_USER_DATA"),
-            @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND_WITH_ID")
-    })
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_UPDATED_USER_DATA", 
+                         content = @Content(mediaType = "application/json", 
+                         schema = @Schema(implementation = UserDTO.class),
+                         examples = @ExampleObject(value = "{ \"id\": 1, \"name\": \"john_doe\", \"email\": \"john.doe@newdomain.com\" }"))),
+            @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND_WITH_ID", content = @Content) })
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUserData(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = this.userService.updateUserData(userId, userDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
-    @Operation(summary = "DELETE_EXISTING_USER", description = "Delete the user data")
+    @Operation(summary = "DELETE_EXISTING_USER", description = "DELETE_USER_DATA")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_DELETED_USER_DATA"),
-            @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND_WITH_ID")
-    })
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY_DELETED_USER_DATA", 
+                         content = @Content(mediaType = "application/json", 
+                         schema = @Schema(implementation = DeleteResponse.class),
+                         examples = @ExampleObject(value = "{ \"message\": \"USER_DATA_DELETED_SUCCESSFULLY\", \"status\": \"success\" }"))),
+            @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND_WITH_ID", content = @Content) })
     @DeleteMapping("/{userId}")
     public ResponseEntity<DeleteResponse> deleteUserData(@PathVariable Long userId) {
         DeleteResponse deleteResponse = this.userService.deleteUserData(userId);

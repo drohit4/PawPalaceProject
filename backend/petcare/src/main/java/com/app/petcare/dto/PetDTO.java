@@ -4,6 +4,12 @@ import java.time.LocalDateTime;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -18,9 +24,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Validated
+@JsonInclude(Include.NON_NULL)  // Only include non-null fields
 public class PetDTO {
-	
-	private Long petId;
+
+    private Long petId;
 
     @NotBlank(message = "Pet name is required.")
     @Size(max = 50, message = "Pet name cannot exceed 50 characters.")
@@ -41,7 +48,7 @@ public class PetDTO {
 
     @PastOrPresent(message = "Update date cannot be in the future.")
     private LocalDateTime updatedAt;
-    
-    private UserDTO user;
 
+    @JsonBackReference
+    private UserDTO user;
 }

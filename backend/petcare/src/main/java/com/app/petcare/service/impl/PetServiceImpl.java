@@ -2,8 +2,8 @@ package com.app.petcare.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +12,11 @@ import com.app.petcare.customeresponse.DeleteResponse;
 import com.app.petcare.dto.PetDTO;
 import com.app.petcare.exceptions.ResourceNotFoundException;
 import com.app.petcare.models.Pet;
+import com.app.petcare.models.User;
 import com.app.petcare.repository.PetRepository;
+import com.app.petcare.repository.UserRepository;
 import com.app.petcare.service.PetService;
 
-import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -26,6 +27,9 @@ public class PetServiceImpl implements PetService {
 
 	@Autowired
 	private PetRepository petRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	public List<PetDTO> getAllPetData() {
@@ -42,16 +46,28 @@ public class PetServiceImpl implements PetService {
 		return this.modelMapper.map(pet, PetDTO.class);
 	}
 
+	/*
+	 * PetDTO will Have user : Two Options now : 1. Retrive the user if present and
+	 * then save the data OR 2. If User not present then save user first then saved
+	 * pet data
+	 */
 	@Override
 	@Transactional
 	public PetDTO createPetProfile(PetDTO petdto) {
-		Pet pet = petDtoToPet(petdto); // Convert DTO to entity
-		pet.setCreatedAt(LocalDateTime.now()); // Set created timestamp
-		pet.setUpdatedAt(LocalDateTime.now()); // Set updated timestamp
-
-		pet = this.petRepository.save(pet); // Save the pet entity
-
-		return this.modelMapper.map(pet, PetDTO.class); // Map the saved entity back to DTO
+	    Optional<User> user = this.userRepository.findByEmail(petdto.getUser().getEmail());
+	    
+	    Pet pet = petDtoToPet(petdto); // Convert DTO to entity
+	    pet.setCreatedAt(LocalDateTime.now()); // Set created timestamp
+	    pet.setUpdatedAt(LocalDateTime.now()); // Set updated timestamp
+	    
+	    if (user.isPresent()) {
+	        User savedUser = user.get(); // Use the existing user, no need to save again
+	        pet.setUser(savedUser); // Associate the pet with the user
+	    }
+	    
+	    pet = this.petRepository.save(pet); // Save the pet entity
+	    
+	    return this.modelMapper.map(pet, PetDTO.class); // Map the saved entity back to DTO
 	}
 
 	@Transactional

@@ -1,5 +1,7 @@
 package com.app.petcare.dto;
 
+import java.util.List;
+
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 
@@ -34,4 +36,6 @@ public class UserDTO {
 	@NumberFormat(style = Style.NUMBER)
 	@Size(min = 10,max = 10)
 	private String mobNumber;
+	
+	private List<PetDTO> pets;
 }

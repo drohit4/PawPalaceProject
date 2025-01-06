@@ -41,5 +41,7 @@ public class PetDTO {
 
     @PastOrPresent(message = "Update date cannot be in the future.")
     private LocalDateTime updatedAt;
+    
+    private UserDTO user;
 
 }

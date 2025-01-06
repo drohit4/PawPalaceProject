@@ -2,11 +2,14 @@ package com.app.petcare.models;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,5 +44,9 @@ public class Pet {
 	
 	@Column
 	private LocalDateTime updatedAt;
+	
+	@ManyToOne
+	@JoinColumn(name = "owner_id",referencedColumnName = "userId")
+	private User user;
 
 }

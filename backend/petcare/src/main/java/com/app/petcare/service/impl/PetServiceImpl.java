@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.petcare.customeresponse.DeleteResponse;
 import com.app.petcare.dto.PetDTO;
+import com.app.petcare.dto.UserDTO;
 import com.app.petcare.exceptions.ResourceNotFoundException;
 import com.app.petcare.models.Pet;
 import com.app.petcare.models.User;
@@ -74,12 +75,17 @@ public class PetServiceImpl implements PetService {
 	@Transactional
 	@Override
 	public PetDTO updatePetData(Long petId, PetDTO petdto) {
-		Pet pet = this.petRepository.findById(petId)
-				.orElseThrow(() -> new ResourceNotFoundException("Pet Data not found with Id : " + petId));
-		pet = this.petRepository.save(updateSavedPetDate(pet, petdto));
-		return this.modelMapper.map(pet, PetDTO.class);
+	    Pet pet = this.petRepository.findById(petId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Pet Data not found with Id : " + petId));
+	    
+	    if (petdto.getUser() != null) {
+	        Optional<User> savedUser = this.userRepository.findByEmail(petdto.getUser().getEmail());
+	        savedUser.ifPresent(pet::setUser);
+	    }
+	    pet = updateSavedPetDate(pet, petdto);
+	    pet = this.petRepository.save(pet);
+	    return this.modelMapper.map(pet, PetDTO.class);
 	}
-
 	@Override
 	public DeleteResponse deletePetDate(Long petId) {
 		Pet pet = this.petRepository.findById(petId)
@@ -114,4 +120,5 @@ public class PetServiceImpl implements PetService {
 		savedPet.setUpdatedAt(LocalDateTime.now());
 		return savedPet;
 	}
+
 }

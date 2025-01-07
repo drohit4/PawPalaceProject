@@ -54,20 +54,21 @@ public class PetServiceImpl implements PetService {
 	@Override
 	@Transactional
 	public PetDTO createPetProfile(PetDTO petdto) {
-	    Optional<User> user = this.userRepository.findByEmail(petdto.getUser().getEmail());
-	    
-	    Pet pet = petDtoToPet(petdto); // Convert DTO to entity
-	    pet.setCreatedAt(LocalDateTime.now()); // Set created timestamp
-	    pet.setUpdatedAt(LocalDateTime.now()); // Set updated timestamp
-	    
-	    if (user.isPresent()) {
-	        User savedUser = user.get(); // Use the existing user, no need to save again
-	        pet.setUser(savedUser); // Associate the pet with the user
-	    }
-	    
-	    pet = this.petRepository.save(pet); // Save the pet entity
-	    
-	    return this.modelMapper.map(pet, PetDTO.class); // Map the saved entity back to DTO
+		Optional<User> user = this.userRepository.findByEmail(petdto.getUser().getEmail());
+
+		Pet pet = petDtoToPet(petdto); // Convert DTO to entity
+		pet.setCreatedAt(LocalDateTime.now()); // Set created timestamp
+		pet.setUpdatedAt(LocalDateTime.now()); // Set updated timestamp
+
+		if (user.isPresent()) {
+			User savedUser = user.get(); // Use the existing user, no need to save again
+			pet.setUser(savedUser); // Associate the pet with the user
+		} else {
+			User savedUser = this.userRepository.save(pet.getUser());
+			pet.setUser(savedUser);
+		}
+		pet = this.petRepository.save(pet); // Save the pet entity
+		return this.modelMapper.map(pet, PetDTO.class); // Map the saved entity back to DTO
 	}
 
 	@Transactional

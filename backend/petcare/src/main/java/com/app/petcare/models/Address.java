@@ -37,4 +37,5 @@ public class Address {
 	@Column
 	private String pincode;
 	
+	private User user;
 }

@@ -34,4 +34,6 @@ public class AddressDTO {
     @NotBlank(message = "Pincode cannot be blank")
     @Pattern(regexp = "\\d{5,10}", message = "Pincode must be a numeric value between 5 and 10 digits")
     private String pincode;
+    
+    private UserDTO user;
 }

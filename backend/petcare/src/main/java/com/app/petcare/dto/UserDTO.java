@@ -47,4 +47,5 @@ public class UserDTO {
     @JsonManagedReference
     private List<PetDTO> pets;
     
+    private AddressDTO address;
 }
